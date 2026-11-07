@@ -15,6 +15,8 @@ export interface UseThunderPhoneOptions {
   voice?: string
   /** Optional per-session factual website/page context. */
   context?: string
+  /** Optional per-session call variables (the publishable key must allow them). */
+  variables?: Record<string, string>
   /**
    * Called when a call starts; return the visitor's current analytics
    * identifiers so the platform can join the call to the visitor's
@@ -216,6 +218,7 @@ export function useThunderPhone(opts: UseThunderPhoneOptions): UseThunderPhoneRe
         context: opts.context,
         analyticsDistinctId: analyticsContext?.distinctId,
         analyticsReplayUrl: analyticsContext?.replaySessionUrl,
+        variables: opts.variables,
       })
       setSession(sess)
     } catch (err) {
@@ -228,7 +231,7 @@ export function useThunderPhone(opts: UseThunderPhoneOptions): UseThunderPhoneRe
         opts.onError?.({ error: 'unknown', message: 'Unable to connect.' })
       }
     }
-  }, [opts.publishableKey, opts.apiBase, opts.language, opts.voice, opts.context, opts.analytics, state, opts.onError, releaseWarmMic])
+  }, [opts.publishableKey, opts.apiBase, opts.language, opts.voice, opts.context, opts.variables, opts.analytics, state, opts.onError, releaseWarmMic])
 
   const disconnect = useCallback(() => {
     handleDisconnect()

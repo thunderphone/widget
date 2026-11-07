@@ -73,6 +73,19 @@ describe('createWidgetSession', () => {
     })
   })
 
+  it('sends call variables when provided, and leaves them out when empty', async () => {
+    mockFetch.mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ call_id: 1, token: 'tok', room_name: 'room', server_url: 'wss://lk', agent_name: 'Agent' }),
+    })
+
+    await createWidgetSession('pk_live_abc', undefined, { language: 'en', variables: { demo_draft: 'tok_123' } })
+    expect(mockFetch.mock.calls[mockFetch.mock.calls.length - 1][1].body).toBe(JSON.stringify({ language: 'en', variables: { demo_draft: 'tok_123' } }))
+
+    await createWidgetSession('pk_live_abc', undefined, { language: 'en', variables: {} })
+    expect(mockFetch.mock.calls[mockFetch.mock.calls.length - 1][1].body).toBe(JSON.stringify({ language: 'en' }))
+  })
+
   it('forwards analytics identifiers when provided', async () => {
     mockFetch.mockResolvedValue({
       ok: true,

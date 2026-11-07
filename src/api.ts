@@ -15,6 +15,8 @@ export interface CreateWidgetSessionOptions {
   context?: string
   analyticsDistinctId?: string
   analyticsReplayUrl?: string
+  /** Per-session call variables, for keys that allow them (or a key-specific name such as a demo draft). */
+  variables?: Record<string, string>
 }
 
 export async function createWidgetSession(
@@ -23,12 +25,13 @@ export async function createWidgetSession(
   options: CreateWidgetSessionOptions = {},
 ): Promise<WidgetSessionResponse> {
   const base = apiBase || DEFAULT_API_BASE
-  const body: Record<string, string> = {}
+  const body: Record<string, unknown> = {}
   if (options.language) body.language = options.language
   if (options.voice) body.voice = options.voice
   if (options.context) body.context = options.context
   if (options.analyticsDistinctId) body.analytics_distinct_id = options.analyticsDistinctId
   if (options.analyticsReplayUrl) body.analytics_replay_url = options.analyticsReplayUrl
+  if (options.variables && Object.keys(options.variables).length) body.variables = options.variables
   const response = await fetch(`${base}/widget/session`, {
     method: 'POST',
     headers: {
